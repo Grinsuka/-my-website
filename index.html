@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Риелторская Компания</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        nav {
+            margin: 1rem 0;
+        }
+
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        .content {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .property {
+            margin-bottom: 15px;
+        }
+
+        .property img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .property a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .property a:hover {
+            text-decoration: underline;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none; /* Скрыто по умолчанию */
+            position: fixed; /* Остается на одном месте */
+            z-index: 1; /* Поверх остальных элементов */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Добавляет прокрутку, если необходимо */
+            background-color: rgb(0, 0, 0); /* Цвет фона */
+            background-color: rgba(0, 0, 0, 0.4); /* Черный фон с прозрачностью */
+        }
+
+        /* Контейнер для модального окна */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% от верхней и центрировка по горизонтали */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Ширина */
+        }
+
+        /* Закрытие кнопки */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Добро пожаловать в нашу риелторскую компанию!</h1>
+        <nav>
+            <a href="#about">О нас</a>
+            <a href="#services">Услуги</a>
+            <a href="#properties">Квартиры</a>
+            <a href="admin.html">Админ-панель</a>
+        </nav>
+    </header>
+
+    <div class="container"> <section class="content" id="about">
+        <h2>О нас</h2>
+        <p>Мы - профессиональная риелторская компания, предоставляющая услуги по продаже и аренде недвижимости...
+        </p>
+    </section>
+
+    <section class="content" id="services">
+        <h2>Наши услуги</h2>
+        <ul>
+            <li>Продажа недвижимости</li>
+            <li>Аренда квартир и домов</li>
+            <li>Консультации по недвижимости</li>
+            <li>Оценка недвижимости</li>
+        </ul>
+    </section>
+
+    <section class="content" id="properties">
+        <h2>Наши квартиры</h2>
+        <div id="propertyList">
+            <!-- Список квартир будет загружаться сюда -->
+        </div>
+    </section>
+
+    <section class="content" id="contact">
+        <h2>Контакты</h2>
+        <p>Для получения дополнительной информации свяжитесь с нами:</p>
+        <p>Email: info@realestate.com</p>
+        <p>Телефон: +7 (123) 456-78-90</p>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2024 Риелторская Компания. Все права защищены.</p>
+</footer>
+
+<!-- Модальное окно -->
+<div id="propertyModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modalPropertyAddress"></h2>
+        <img id="modalPropertyImage" alt="Изображение квартиры" style="max-width: 100%;">
+        <p id="modalPropertyPrice"></p>
+        <p id="modalPropertyDescription"></p>
+    </div>
+</div>
+
+<script>
+    // Функция для загрузки квартир из localStorage
+    function loadProperties() {
+        const properties = JSON.parse(localStorage.getItem('properties')) || [];
+        const propertyList = document.getElementById('propertyList');
+
+        properties.forEach(property => {
+            const propertyCard = document.createElement('div');
+            propertyCard.className = 'property';
+            propertyCard.innerHTML = `
+                <h3><a href="#" onclick="showPropertyDetails('${property.address}', ${property.price}, '${property.description}', '${property.image}')">${property.address}</a></h3>
+                <p>Цена: ${property.price} ₽</p>
+                <img src="${property.image}" alt="${property.address}">
+            `;
+            propertyList.appendChild(propertyCard);
+        });
+    }
+
+    // Функция для отображения подробной информации о квартире в модальном окне
+    function showPropertyDetails(address, price, description, image) {
+        document.getElementById('modalPropertyAddress').innerText = address;
+        document.getElementById('modalPropertyPrice').innerText = `Цена: ${price} ₽`;
+        document.getElementById('modalPropertyDescription').innerText = description;
+        document.getElementById('modalPropertyImage').src = image;
+
+        // Открытие модального окна
+        document.getElementById('propertyModal').style.display = "block";
+    }
+
+    // Закрытие модального окна
+    function closeModal() {
+        document.getElementById('propertyModal').style.display = "none";
+    }
+
+    // Закрытие модального окна при клике вне его области
+    window.onclick = function (event) {
+        const modal = document.getElementById('propertyModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    loadProperties();
+</script>
+</body>
+
+</html>
