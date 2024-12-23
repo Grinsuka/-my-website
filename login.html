@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в админ-панель</title>
+</head>
+<body>
+    <h1>Вход в админ-панель</h1>
+    <form id="loginForm">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" required>
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" required>
+        <button type="submit">Войти</button>
+    </form>
+
+    <script>
+        document.getElementById('loginForm').onsubmit = function (e) {
+            e.preventDefault(); // предотвращаем перезагрузку страницы
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Пример учетных данных (можно заменить на ваши)
+            const validUsername = 'admin';
+            const validPassword = 'password123';
+
+            if (username === validUsername && password === validPassword) {
+                // Если учетные данные валидны, сохраняем статус в localStorage
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'admin.html'; // Перенаправление на админ-панель
+            } else {
+                alert('Неверное имя пользователя или пароль');
+            }
+        };
+    </script>
+</body>
+</html>

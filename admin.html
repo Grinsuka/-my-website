@@ -54,10 +54,48 @@
         button:hover {
             background-color: #45a049;
         }
+
+        #propertyList {
+            margin-top: 20px;
+        }
+
+        .property {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .property img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .action-buttons {
+            margin-top: 10px;
+        }
+
+        .action-buttons button {
+            background-color: #f44336;
+            margin-right: 10px;
+        }
+
+        .action-buttons button.edit {
+            background-color: #2196F3;
+        }
     </style>
 </head>
 <body>
-    <h1>Добавить новую квартиру</h1>
+    <script>
+        // Проверка, залогинен ли пользователь
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html'; // Перенаправление на страницу входа
+        }
+    </script>
+
+    <h1>Управление квартирами</h1>
     <div id="propertyForm">
         <div class="form-group">
             <label for="address">Адрес:</label>
@@ -71,36 +109,43 @@
             <label for="description">Описание:</label>
             <textarea id="description" placeholder="Введите описание квартиры" required></textarea>
         </div>
-        <button onclick="addProperty()">Добавить квартиру</button>
+        <div class="form-group">
+            <label for="image">Изображение:</label>
+            <input type="file" id="image" accept="image/*" required>
+        </div>
+        <button id="addButton" onclick="addProperty()">Добавить квартиру</button>
+    </div>
+
+    <div id="propertyList">
+        <h2>Список квартир:</h2>
+        <div id="propertiesContainer"></div>
     </div>
 
     <script>
+        let editingIndex = -1;
+
         function addProperty() {
             const address = document.getElementById('address').value;
-            const price = document.getElementById('price').value;
-            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value; const description = document.getElementById('description').value;
+            const image = document.getElementById('image').files[0];
+            if (!image) {
+                alert('Пожалуйста, загрузите изображение.');
+                return;
+            }
 
-            const propertyData = {
-                address: address,
-                price: price,
-                description: description
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const propertyData = {
+                    address: address,
+                    price: price,
+                    description: description,
+                    image: e.target.result // Сохраняем данные изображения в виде Data URL
+                };
+
+                // Добавьте ваше дальнейшее управление данных недвижимости здесь...
             };
 
-            savePropertyToLocal(propertyData);
-            clearForm();
-        }
-
-        function savePropertyToLocal(propertyData) {
-            let properties = JSON.parse(localStorage.getItem('properties')) || [];
-            properties.push(propertyData);
-            localStorage.setItem('properties', JSON.stringify(properties));
-            alert('Квартира добавлена успешно!');
-        }
-
-        function clearForm() {
-            document.getElementById('address').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('description').value = '';
+            reader.readAsDataURL(image);
         }
     </script>
 </body>

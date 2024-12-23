@@ -55,10 +55,15 @@
 
         .property {
             margin-bottom: 15px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
         }
 
         .property img {
             max-width: 100%;
+            height: auto;
             border-radius: 5px;
         }
 
@@ -92,6 +97,7 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%; /* Ширина */
+            border-radius: 5px;
         }
 
         /* Закрытие кнопки */
@@ -122,96 +128,108 @@
         </nav>
     </header>
 
-    <div class="container"> <section class="content" id="about">
-        <h2>О нас</h2>
-        <p>Мы - профессиональная риелторская компания, предоставляющая услуги по продаже и аренде недвижимости...
-        </p>
-    </section>
+    <div class="container">
+        <section class="content" id="about">
+            <h2>О нас</h2>  <p>Мы - профессиональная риелторская компания, предоставляющая услуги по продаже и аренде недвижимости...</p>
+        </section>
 
-    <section class="content" id="services">
-        <h2>Наши услуги</h2>
-        <ul>
-            <li>Продажа недвижимости</li>
-            <li>Аренда квартир и домов</li>
-            <li>Консультации по недвижимости</li>
-            <li>Оценка недвижимости</li>
-        </ul>
-    </section>
+        <section class="content" id="services">
+            <h2>Наши услуги</h2>
+            <ul>
+                <li>Продажа недвижимости</li>
+                <li>Аренда квартир и домов</li>
+                <li>Консультации по недвижимости</li>
+                <li>Оценка недвижимости</li>
+            </ul>
+        </section>
 
-    <section class="content" id="properties">
-        <h2>Наши квартиры</h2>
-        <div id="propertyList">
-            <!-- Список квартир будет загружаться сюда -->
-        </div>
-    </section>
+        <section class="content" id="properties">
+            <h2>Наши квартиры</h2>
+            <div id="propertyList">
+                <p>Информация о квартирах будет добавлена позже.</p>
+            </div>
+        </section>
 
-    <section class="content" id="contact">
-        <h2>Контакты</h2>
-        <p>Для получения дополнительной информации свяжитесь с нами:</p>
-        <p>Email: info@realestate.com</p>
-        <p>Телефон: +7 (123) 456-78-90</p>
-    </section>
-</div>
-
-<footer>
-    <p>&copy; 2024 Риелторская Компания. Все права защищены.</p>
-</footer>
-
-<!-- Модальное окно -->
-<div id="propertyModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2 id="modalPropertyAddress"></h2>
-        <img id="modalPropertyImage" alt="Изображение квартиры" style="max-width: 100%;">
-        <p id="modalPropertyPrice"></p>
-        <p id="modalPropertyDescription"></p>
+        <section class="content" id="contact">
+            <h2>Контакты</h2>
+            <p>Для получения дополнительной информации свяжитесь с нами:</p>
+            <p>Email: info@realestate.com</p>
+            <p>Телефон: +7 (123) 456-78-90</p>
+        </section>
     </div>
-</div>
 
-<script>
-    // Функция для загрузки квартир из localStorage
-    function loadProperties() {
-        const properties = JSON.parse(localStorage.getItem('properties')) || [];
-        const propertyList = document.getElementById('propertyList');
+    <footer>
+        <p>&copy; 2024 Риелторская Компания. Все права защищены.</p>
+    </footer>
 
-        properties.forEach(property => {
-            const propertyCard = document.createElement('div');
-            propertyCard.className = 'property';
-            propertyCard.innerHTML = `
-                <h3><a href="#" onclick="showPropertyDetails('${property.address}', ${property.price}, '${property.description}', '${property.image}')">${property.address}</a></h3>
-                <p>Цена: ${property.price} ₽</p>
-                <img src="${property.image}" alt="${property.address}">
-            `;
-            propertyList.appendChild(propertyCard);
-        });
-    }
+    <!-- Модальное окно для отображения информации о квартире -->
+    <div id="propertyModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p><strong>Адрес:</strong> <span id="modalAddress"></span></p>
+            <p><strong>Цена:</strong> <span id="modalPrice"></span> рублей</p>
+            <img id="modalImage" src="" alt="Изображение квартиры" style="max-width: 100%; height: auto; border-radius: 5px;">
+            <p id="modalDescription"></p>
+        </div>
+    </div>
 
-    // Функция для отображения подробной информации о квартире в модальном окне
-    function showPropertyDetails(address, price, description, image) {
-        document.getElementById('modalPropertyAddress').innerText = address;
-        document.getElementById('modalPropertyPrice').innerText = `Цена: ${price} ₽`;
-        document.getElementById('modalPropertyDescription').innerText = description;
-        document.getElementById('modalPropertyImage').src = image;
+    <script>
+        const modal = document.getElementById("propertyModal");
+        const closeModal = document.getElementsByClassName("close")[0];
+        const modalTitle = document.getElementById("modalTitle");
+        const modalAddress = document.getElementById("modalAddress");
+        const modalPrice = document.getElementById("modalPrice");
+        const modalDescription = document.getElementById("modalDescription");
+        const modalImage = document.getElementById("modalImage");
 
-        // Открытие модального окна
-        document.getElementById('propertyModal').style.display = "block";
-    }
+        // Функция для отображения списка квартир
+        function displayProperties() {
+            const properties = JSON.parse(localStorage.getItem('properties')) || [];
+            const propertyList = document.getElementById('propertyList');
 
-    // Закрытие модального окна
-    function closeModal() {
-        document.getElementById('propertyModal').style.display = "none";
-    }
+            if (properties.length === 0) {
+                propertyList.innerHTML = '<p>Квартиры не найдены.</p>';
+                return;
+            }
 
-    // Закрытие модального окна при клике вне его области
-    window.onclick = function (event) {
-        const modal = document.getElementById('propertyModal');
-        if (event.target === modal) {
-            closeModal();
+            properties.forEach((property, index) => {
+                const propertyDiv = document.createElement('div');
+                propertyDiv.className = 'property';
+                propertyDiv.innerHTML = `
+                    <h3>${property.address}</h3>
+                    <p><strong>Цена:</strong> ${property.price} рублей</p>
+                    <img src="${property.image}" alt="Изображение квартиры" style="max-width: 100%; height: auto; border-radius: 5px;">
+                    <p><a href="#" onclick="openModal('${property.address}', '${property.price}', '${property.description}', '${property.image}')">Подробнее</a></p>
+                `;
+                propertyList.appendChild(propertyDiv);
+            });
         }
-    }
 
-    loadProperties();
-</script>
+        // Функция для открытия модального окна
+        function openModal(address, price, description, image) {
+            modal.style.display = "block";
+            modalTitle.textContent = "Квартира";
+            modalAddress.textContent = address;
+            modalPrice.textContent = price;
+            modalDescription.textContent = description; modalImage.src = image; // Устанавливаем изображение в модальном окне
+        }
+
+        // Закрытие модального окна
+        closeModal.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // Закрытие модального окна при нажатии вне его
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Отображение квартир при загрузке страницы
+        window.onload = displayProperties;
+
+    </script>
 </body>
-
 </html>
